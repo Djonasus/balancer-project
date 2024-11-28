@@ -1,0 +1,62 @@
+networks:
+  dev:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    depends_on:
+      - balancer
+      - frontend
+    networks:
+      - dev
+
+#################################
+
+  sprite:
+    build:
+      context: ./server
+    networks:
+      - dev
+    environment:
+      PORT: 8001
+      SERVER_NAME: Sprite
+
+  mirinda:
+    build:
+      context: ./server
+    networks:
+      - dev
+    environment:
+      PORT: 8002
+      SERVER_NAME: Mirinda
+
+  cola:
+    build:
+      context: ./server
+    networks:
+      - dev
+    environment:
+      PORT: 8003
+      SERVER_NAME: Cola
+
+################################
+
+  balancer:
+    build:
+      context: ./gateway
+    networks:
+      - dev
+    depends_on:
+      - sprite
+      - mirinda
+      - cola
+
+  frontend:
+    build:
+      context: ./frontend
+    networks:
+      - dev
