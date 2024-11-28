@@ -14,17 +14,22 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Error loading .env file")
+		os.Setenv("PORT", "8000")
 	}
 
 	pool := &BackendPool{}
 
 	// Добавляем серверы
 
-	err = pool.LoadServers("config.json")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = pool.LoadServers("config.json")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	pool.AddServer("localhost:8001")
+	pool.AddServer("localhost:8002")
+	pool.AddServer("localhost:8003")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
